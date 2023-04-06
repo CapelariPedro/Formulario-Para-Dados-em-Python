@@ -1,6 +1,7 @@
 import tkinter 
 from tkinter import ttk
 from tkinter import messagebox
+import sqlite3
 
 def enter_data():
     accepted = accept_var.get()
@@ -24,9 +25,21 @@ def enter_data():
             print("Status do Registro: ", status_registro, "# Mês da Contratação: ", mes, "#Ano da Contratação: ",ano)
             print("------------------------------------------------------------------------------------------")
 
-            #inserir codigo para criação da TABLE em SQL!!!!.
+            #codigo para criação da TABLE em SQL!!!!.
+            conn = sqlite3.connect('data.db')
+            table_create_query = '''CREATE TABLE IF NOT EXISTS Funcionario_Data(Nome TEXT, Sobrenome TEXT, Cargo TEXT, Idade INT, Area_Atuacao TEXT, Status_de_Registro TEXT, Mes TEXT, Ano INT)'''
+            conn.execute(table_create_query)
 
+            #inserindo dados no DB
+            data_insert_query = '''INSERT INTO Funcionario_Data (Nome, Sobrenome, Cargo, Idade , Area_Atuacao , Status_de_Registro, Mes , Ano) VALUES(?,?,?,?,?,?,?,?)'''
+            data_insert_tuple = (nome, sobrenome, cargo, idade , area_atuacao , status_registro, mes , ano)
+
+            cursor = conn.cursor()
+            cursor.execute(data_insert_query, data_insert_tuple)
+            conn.commit()
             
+            conn.close()
+
         else:
             tkinter.messagebox.showwarning(title="Erro", message="Nome e Sobrenome são necessarios.")
     
